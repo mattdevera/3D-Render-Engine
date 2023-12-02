@@ -79,3 +79,34 @@ class Triangle {
         this.color = color;
     }
 }
+
+class Matrix3 {
+
+    double[] values;
+
+    Matrix3(double[] values) {
+        this.values = values;
+    }
+
+    Matrix3 multiply(Matrix3 other) {
+        double[] result = new double[9];
+
+        for(int i = 0; i < 3; i++) {
+            for(int j = 0; j < 3; j++) {
+                for(int k = 0; k < 3; k++) {
+                    result[i * 3 + j] += this.values[i * 3 * k] * other.values[k * 3 * j];
+                }
+            }
+        }
+
+        return new Matrix3(result);
+    }
+
+    Vertex transform(Vertex in) {
+        return new Vertex(
+            in.x * values[0] + in.y * values[3] + in.z * values[6],
+            in.x * values[1] + in.y * values[4] + in.z * values[7],
+            in.x * values[2] + in.y * values[5] + in.z * values[8]
+        );
+    }
+}
