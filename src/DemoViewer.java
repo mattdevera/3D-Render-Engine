@@ -49,12 +49,32 @@ public class DemoViewer {
 
                 //transformation implementation
                 double heading = Math.toRadians(headingSlider.getValue());
+
+                /*
                 Matrix3 transform = new Matrix3(new double[] {
                     Math.cos(heading), 0, -Math.sin(heading),
                     0, 1, 0,
                     Math.sin(heading), 0, Math.cos(heading)
                 });
+                */
 
+                
+
+                double pitch = Math.toRadians(pitchSlider.getValue());
+
+                Matrix3 headingTransform = new Matrix3(new double[] {
+                    Math.cos(heading), 0, Math.sin(heading),
+                    0, 1, 0,
+                    -Math.sin(heading), 0, Math.cos(heading)
+                });
+                Matrix3 pitchTransform = new Matrix3(new double[] {
+                    1, 0, 0,
+                    0, Math.cos(pitch), Math.sin(pitch),
+                    0, -Math.sin(pitch), Math.cos(pitch)
+                });
+
+                Matrix3 transform = headingTransform.multiply(pitchTransform);
+                
                 g2.translate(getWidth() / 2, getHeight() / 2);
                 g2.setColor(Color.WHITE);
                 for(Triangle t : tris) {
@@ -68,7 +88,6 @@ public class DemoViewer {
                     path.closePath();
                     g2.draw(path);
                 }
-
             }
         };
         pane.add(renderPanel, BorderLayout.CENTER);
@@ -117,12 +136,13 @@ class Matrix3 {
     }
 
     Matrix3 multiply(Matrix3 other) {
+
         double[] result = new double[9];
 
-        for(int i = 0; i < 3; i++) {
-            for(int j = 0; j < 3; j++) {
-                for(int k = 0; k < 3; k++) {
-                    result[i * 3 + j] += this.values[i * 3 * k] * other.values[k * 3 * j];
+        for(int row = 0; row < 3; row ++) {
+            for(int col = 0; col < 3; col++) {
+                for(int i = 0; i < 3; i++) {
+                    result[row * 3 + col] += this.values[row * 3 + i] * other.values[i * 3 + col];
                 }
             }
         }
